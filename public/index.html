@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Demand Intelligence Pipeline</title>
+    <!-- Modern Typography: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Background decorative elements for aesthetic -->
+    <div class="bg-gradient-1"></div>
+    <div class="bg-gradient-2"></div>
+
+    <div class="app-container">
+
+        <header class="top-nav">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <h1>Pipeline AI</h1>
+                <div id="serverStatus" class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+            </div>
+            <div class="nav-controls">
+                <div class="config-group">
+                    <label for="budgetInput">Budget ($)</label>
+                    <input type="number" id="budgetInput" value="50000" step="5000" min="10000" />
+                </div>
+                <button id="refreshBtn" class="btn primary-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                        <path d="M21 3v5h-5"></path>
+                    </svg>
+                    Run Pipeline
+                </button>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="loading-overlay hidden">
+                <div class="spinner"></div>
+                <p>Running ML Pipeline & Optimising Inventory...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="state-message hidden">
+                <div class="error-icon">⚠️</div>
+                <h2>Pipeline Execution Failed</h2>
+                <p id="errorMsg">Could not connect to the backend engine.</p>
+                <button onclick="fetchData()" class="btn secondary-btn">Try Again</button>
+            </div>
+
+            <!-- Data Dashboard -->
+            <div id="dashboardData" class="dashboard-grid hidden">
+
+                <!-- Top KPIs: Optimization Results -->
+                <section class="kpi-panel glass-panel glow">
+                    <h2>Optimization Result</h2>
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <h3>Total Budget</h3>
+                            <p class="value" id="kpiBudget">$50,000</p>
+                        </div>
+                        <div class="kpi-card highlight">
+                            <h3>Allocated Cost</h3>
+                            <p class="value" id="kpiCost">$0</p>
+                            <span class="badge" id="kpiFeasible">Feasible</span>
+                        </div>
+                        <div class="kpi-card">
+                            <h3>Avg Coverage</h3>
+                            <p class="value" id="kpiCoverage">0%</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Forecasts & Time Series -->
+                <section class="main-chart-panel glass-panel">
+                    <div class="panel-header">
+                        <h2>30-Day Demand Forecast by Cluster</h2>
+                        <span class="subtitle">Holt-Winters Triple Exponential Smoothing</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
+                </section>
+
+                <div class="bottom-grid">
+
+                    <!-- Section: Inventory Allocation -->
+                    <section class="side-chart-panel glass-panel">
+                        <div class="panel-header">
+                            <h2>Inventory Allocation vs Demand</h2>
+                            <span class="subtitle">Linear Programming Output</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="allocationChart"></canvas>
+                        </div>
+                    </section>
+
+                    <!-- Section: Cluster & Accuracy Stats -->
+                    <section class="tables-panel glass-panel">
+                        <!-- Tabs -->
+                        <div class="tabs">
+                            <button class="tab-btn active" onclick="switchTab('clusterTab')">Cluster Stats</button>
+                            <button class="tab-btn" onclick="switchTab('accuracyTab')">Forecast Accuracy</button>
+                            <button class="tab-btn" onclick="switchTab('statusTab')">System Status</button>
+                        </div>
+
+                        <!-- Tab Content: Cluster Stats -->
+                        <div id="clusterTab" class="tab-content active">
+                            <div class="table-container">
+                                <table id="clusterTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Size</th>
+                                            <th>Avg Cost</th>
+                                            <th>Avg Qty</th>
+                                            <th>Avg Rev</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Forecast Accuracy -->
+                        <div id="accuracyTab" class="tab-content">
+                            <div class="table-container">
+                                <table id="accuracyTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Cluster</th>
+                                            <th>MAE</th>
+                                            <th>RMSE</th>
+                                            <th>sMAPE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- System Status Tab -->
+                        <div id="statusTab" class="tab-content">
+                            <div class="status-grid">
+                                <!-- Health Check -->
+                                <div class="status-card glass-panel glow" id="card-health">
+                                    <div class="card-header">
+                                        <span class="endpoint">/api/health</span>
+                                        <div class="status-badge" id="badge-health">Checking...</div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="latency-row">
+                                            <span>Latency</span>
+                                            <span class="latency-val" id="lat-health">--</span>
+                                        </div>
+                                        <div class="latency-bar-bg">
+                                            <div class="latency-bar" id="bar-health"></div>
+                                        </div>
+                                        <div class="details">
+                                            <p>Backend: <strong id="val-backend">--</strong></p>
+                                            <p>Database: <strong id="val-db">--</strong></p>
+                                            <p>Uptime: <strong id="val-uptime">--</strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Pipeline Run -->
+                                <div class="status-card glass-panel glow" id="card-pipeline">
+                                    <div class="card-header">
+                                        <span class="endpoint">/api/pipeline</span>
+                                        <div class="status-badge" id="badge-pipeline">Checking...</div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="latency-row">
+                                            <span>Latency</span>
+                                            <span class="latency-val" id="lat-pipeline">--</span>
+                                        </div>
+                                        <div class="latency-bar-bg">
+                                            <div class="latency-bar" id="bar-pipeline"></div>
+                                        </div>
+                                        <div class="details">
+                                            <p>Type: <strong>GET</strong></p>
+                                            <p>Cache: <strong id="val-cache">--</strong></p>
+                                            <p>Last Run: <strong id="val-lastrun">--</strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Config -->
+                                <div class="status-card glass-panel glow" id="card-config">
+                                    <div class="card-header">
+                                        <span class="endpoint">/api/config</span>
+                                        <div class="status-badge" id="badge-config">Checking...</div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="latency-row">
+                                            <span>Latency</span>
+                                            <span class="latency-val" id="lat-config">--</span>
+                                        </div>
+                                        <div class="latency-bar-bg">
+                                            <div class="latency-bar" id="bar-config"></div>
+                                        </div>
+                                        <div class="details">
+                                            <p>Budget: <strong id="val-budget">--</strong></p>
+                                            <p>Horizon: <strong id="val-horizon">--</strong></p>
+                                            <p>K-Range: <strong id="val-k">--</strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-content glass-panel">
+                <span>API Status: <strong id="footerStatus">Idle</strong></span>
+                <span class="divider">|</span>
+                <span>Uptime: <strong id="footerUptime">--</strong></span>
+                <span class="divider">|</span>
+                <span>Last Run: <strong id="footerLastRun">Never</strong></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="app.js"></script>
+</body>
+
+</html>

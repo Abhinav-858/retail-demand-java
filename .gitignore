@@ -1,0 +1,21 @@
+# Maven
+target/
+*.class
+
+# Logs
+*.log
+compile_output.txt
+error_log.txt
+server_log.txt
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.iml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary extracted files
+pptx_extracted/

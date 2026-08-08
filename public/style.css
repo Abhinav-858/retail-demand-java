@@ -1,0 +1,608 @@
+/* ── Base Variables & Reset ──────────────────────────────────────────────── *
+* Modern Dark Theme Palette inspired by premium dashboards
+*/
+:root {
+    --bg-base: #020617;
+    /* Slate 950 */
+    --bg-panel: rgba(15, 23, 42, 0.6);
+    /* Slate 900 w/ opacity */
+    --text-main: #f8fafc;
+    /* Slate 50 */
+    --text-muted: #94a3b8;
+    /* Slate 400 */
+    --accent-primary: #3b82f6;
+    /* Blue 500 */
+    --accent-hover: #2563eb;
+    /* Blue 600 */
+    --border-color: rgba(51, 65, 85, 0.5);
+    /* Slate 700 w/ opacity */
+
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Decorative Background Gradients ─────────────────────────────────────── */
+.bg-gradient-1 {
+    position: fixed;
+    top: -20%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(2, 6, 23, 0) 70%);
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.bg-gradient-2 {
+    position: fixed;
+    bottom: -20%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, rgba(2, 6, 23, 0) 70%);
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+}
+
+header.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.primary-btn {
+    background: var(--accent-primary);
+    color: white;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.primary-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.primary-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Panels (Glassmorphism) ──────────────────────────────────────────────── */
+.glass-panel {
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.glow {
+    position: relative;
+}
+
+.glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    border-radius: 16px 16px 0 0;
+}
+
+.panel-header {
+    margin-bottom: 1.5rem;
+}
+
+.panel-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.panel-header .subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ── Dashboard Grid Layout ───────────────────────────────────────────────── */
+.hidden {
+    display: none !important;
+}
+
+/* Dashboard layout */
+#dashboardData {
+    /* Initially hide this container then fade up on JS load */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.fade-up {
+    animation: fadeUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Top KPIs */
+.kpi-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.kpi-panel h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.kpi-card {
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+.kpi-card h3 {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.kpi-card .value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.kpi-card .badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.kpi-card .value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.kpi-card .badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    /* default grey */
+}
+
+.status-indicator.online .status-dot {
+    background: #10b981;
+    /* emerald/green */
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.status-indicator.offline .status-dot {
+    background: #ef4444;
+    /* red */
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Nav Controls */
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.config-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.config-group label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.config-group input {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    width: 100px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.config-group input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Buttons */
+/* Big chart */
+.main-chart-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+/* Bottom elements */
+.bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.side-chart-panel .chart-container {
+    height: 300px;
+}
+
+/* ── Tables & Tabs ───────────────────────────────────────────────────────── */
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    font-family: var(--font-main);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+}
+
+.tab-btn.active {
+    color: var(--accent-primary);
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeUp 0.3s ease;
+}
+
+.table-container {
+    overflow-x: auto;
+    max-height: 300px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+table th {
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 1rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+}
+
+table td {
+    padding: 1rem 0.5rem;
+    border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+    color: var(--text-main);
+}
+
+table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ── System Status Tab ─────────────────────────────────────────────────── */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.status-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem !important;
+    background: rgba(30, 41, 59, 0.4) !important;
+}
+
+.status-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-card .endpoint {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: var(--accent-primary);
+    background: rgba(59, 130, 246, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+}
+
+.status-badge.online {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.status-badge.offline {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.status-card .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.latency-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.latency-val {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.latency-bar-bg {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.latency-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-primary);
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+.status-card .details {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.status-card .details p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-card .details strong {
+    color: var(--text-main);
+    font-weight: 400;
+}
+
+/* Text Utilities */
+.text-warning {
+    color: var(--warning);
+}
+
+.text-danger {
+    color: var(--danger);
+    font-weight: 600;
+}
+
+/* ── Loading & Error States ──────────────────────────────────────────────── */
+.loading-overlay,
+.state-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    text-align: center;
+}
+
+/* Spinner */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(59, 130, 246, 0.2);
+    border-radius: 50%;
+    border-top-color: var(--accent-primary);
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.state-message h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.state-message p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        padding: 1rem;
+    }
+
+    .kpi-card .value {
+        font-size: 1.5rem;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+}
